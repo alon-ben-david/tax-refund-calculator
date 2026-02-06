@@ -68,58 +68,10 @@ git push -u origin main
 
 1. ב-GitHub: **Settings → Pages**.
 2. תחת **Build and deployment**:
-   - **Source:** Deploy from a branch.
-   - **Branch:** `main` (או `master` אם זה הענף שלך).
-   - **Folder:** `/ (root)` לא מספיק כי ה-build נמצא ב-`dist`. עדיף להשתמש ב-**GitHub Actions**:
-3. צור קובץ `.github/workflows/deploy.yml`:
-
-```yaml
-name: Deploy to GitHub Pages
-on:
-  push:
-    branches: [main]
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-      - run: npm ci
-      - run: npm run build
-      - uses: actions/upload-pages-artifact@v3
-        with:
-          path: dist
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - id: deployment
-        uses: actions/deploy-pages@v4
-```
-
-4. ב-`vite.config.ts` הוסף `base` בהתאם לשם הריפו (חובה ל-GitHub Pages):
-
-```ts
-export default defineConfig({
-  base: '/tax-refund-calculator/',  // שם הריפו ב-GitHub
-  // ... שאר ההגדרות
-});
-```
-
-5. העלה את ה-workflow ו-Pages יבנו ויעלו אוטומטית. הקישור יהיה:
+   - **Source:** בחר **GitHub Actions** (לא "Deploy from a branch").
+3. ה-workflow כבר קיים בפרויקט: `.github/workflows/deploy.yml`. אחרי push ל-`main` ה-Action ירוץ אוטומטית. אפשר גם להריץ ידנית: **Actions** → **Deploy to GitHub Pages** → **Run workflow**.
+4. ב-`vite.config.ts` כבר מוגדר `base: '/tax-refund-calculator/'` (חובה ל-GitHub Pages).
+5. אם ה-deploy נכשל: וודא ש-**Settings → Pages → Source** הוא **GitHub Actions** (לא branch). הקישור אחרי הצלחה:
 
 - `https://YOUR_USERNAME.github.io/tax-refund-calculator/`
 
